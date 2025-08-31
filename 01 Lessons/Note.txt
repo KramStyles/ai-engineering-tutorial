@@ -1,0 +1,14 @@
+The MNIST Database is the 'hello world' example of students who want to learn machine learning. 
+The dataset includes 70,000 images of handwritten images usually containing numbers and letters.
+
+Supervised Learning: This excels when we work with labeled data. Classification of data involves knowing what class a data belongs to e.g., providing a dataset of images of dogs and cats. When a new picture is provided, classification would help determine if it's a dog image or not. In supervised learning, we explictly trained the model with known outputs to guide its learning.
+
+Unservised Learning: Here, we process data without labels. E.g., a large dataset of animal images containing dogs and other animals without labels. The model would have to go through all the images and surely, it would detect a pattern that would let it group each animals based on similar characteristics. 
+
+Reinforcement Learning: This knows what the output would be just like the supervised learning but no labelled data is provided. Here rules are created and the ML model learns through trial and errors. Netflix uses this type of learning as it suggests certain shows to the user and learns based on the feedback from the user (or shows added to wishlists or skipped).
+
+Deep Learning: This is a subset of machine learning inspired by how the human brain works. The deep learning process is complex and allows machines to learn by processing input information in stages. It has input layers, intermidiate (hidden layer(s)), and output layers.
+
+Computer Vision: This is an AI field that uses machine learning and neural networks to teach computers and systems to derive meaningful information from digital images, videos and other visual inputs and to make recommendation or take actions when they see or detect issues. If AI functions as the brain, computer vision is the eyes.
+
+Natural Language Processing: A field of computer science that studies how computers understand, interpret, and generate human language data.
