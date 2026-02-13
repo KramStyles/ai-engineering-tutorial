@@ -1,14 +1,15 @@
 import datetime
 import calendar
 
+
 def monthly_charge(month, subscription, users):
-  """ Computes the monthly charge for a given subscription.
- 
+    """ Computes the monthly charge for a given subscription.
+
   @rtype: int
   @returns: the total monthly bill for the customer in cents, rounded
     to the nearest cent. For example, a bill of $20.00 should return 2000.
     If there are no active users or the subscription is None, returns 0.
- 
+
   @type month: str
   @param month - Always present
     Has the following structure:
@@ -22,7 +23,7 @@ def monthly_charge(month, subscription, users):
       'customer_id': 328,
       'monthly_price_in_cents': 359  # price per active user per month
     }
- 
+
   @type users: list
   @param users - May be empty, but not None
     Has the following structure:
@@ -31,10 +32,10 @@ def monthly_charge(month, subscription, users):
         'id': 1,
         'name': "Employee #1",
         'customer_id': 1,
-    
+
         # when this user started
         'activated_on': datetime.date(2021, 11, 4),
-    
+
         # last day to bill for user
         # should bill up to and including this date
         # since user had some access on this date
@@ -44,27 +45,62 @@ def monthly_charge(month, subscription, users):
         'id': 2,
         'name': "Employee #2",
         'customer_id': 1,
-    
+
         # when this user started
         'activated_on': datetime.date(2021, 12, 4),
-    
+
         # hasn't been deactivated yet
         'deactivated_on': None
       },
     ]
   """
-  # your code here!
-  # Get days users were activated
-  days_activated = []
-  for user in users:
-    days_activated.append(user['activated_on'])
+    # Returns 0 if there are no active users or the subscription is None
+    if subscription is None or len(users) < 1:
+        return 0
+
+    # Parse month from string to date and get first, last and days
+    month_date = datetime.datetime.strptime(month, "%Y-%m").date()
+    first_day = first_day_of_month(month_date)
+    last_day = last_day_of_month(month_date)
+    days_in_month = (last_day - first_day).days + 1
+
+    total = 0
+
+    for user in users:
+        activated = user.get('activated_on')
+        deactivated = user.get('deactivated_on')
+
+        # Skip if the user has no activation date
+        if activated is None:
+            continue
+
+        # Determine the overlap between the user's active day and the month
+        active_start = max(activated, first_day)
+        active_end = deactivated or last_day
+        active_end = min(active_end, last_day)
+
+        # If there's no overlap, skip
+        if active_start > last_day or active_end < first_day:
+            continue
+
+        days_active = (active_end - active_start).days + 1
+
+        # Calculate the monthly price -> daily price and find charge for active days
+        monthly_price = subscription.get('monthly_price_in_cents', 0)
+        daily_price = float(monthly_price) / days_in_month
+        charge = int(round(daily_price * days_active))
+
+        total += charge
+
+    return int(total)
+
 
 ####################
 # Helper functions #
 ####################
 
 def first_day_of_month(date):
-  """
+    """
   Takes a datetime.date object and returns a datetime.date object
   which is the first day of that month. For example:
 
@@ -74,10 +110,11 @@ def first_day_of_month(date):
   Input type: datetime.date
   Output type: datetime.date
   """
-  return date.replace(day=1)
+    return date.replace(day=1)
+
 
 def last_day_of_month(date):
-  """
+    """
   Takes a datetime.date object and returns a datetime.date object
   which is the last day of that month. For example:
 
@@ -87,11 +124,12 @@ def last_day_of_month(date):
   Input type: datetime.date
   Output type: datetime.date
   """
-  last_day = calendar.monthrange(date.year, date.month)[1]
-  return date.replace(day=last_day)
+    last_day = calendar.monthrange(date.year, date.month)[1]
+    return date.replace(day=last_day)
+
 
 def next_day(date):
-  """
+    """
   Takes a datetime.date object and returns a datetime.date object
   which is the next day. For example:
 
@@ -104,4 +142,4 @@ def next_day(date):
   Input type: datetime.date
   Output type: datetime.date
   """
-  return date + datetime.timedelta(days=1)
+    return date + datetime.timedelta(days=1)

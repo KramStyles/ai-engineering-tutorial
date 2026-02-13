@@ -35,3 +35,7 @@ class Test(unittest.TestCase):
   def test_works_when_the_active_users_are_active_the_entire_month(self):
     expected_user_count = 2
     self.assertAlmostEqual(monthly_charge('2020-12', plan, users), expected_user_count * 5_000, delta=1)
+
+print("hello")
+# assert monthly_charge('2018-10', plan, users) == 0
+assert monthly_charge('2020-12', plan, users) == 2 * 5_000
