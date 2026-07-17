@@ -41,3 +41,4 @@ ipywidgets (8.1.5) – Provides interactive controls (like sliders, dropdowns, a
 
 NumPy <(2.0.0) – The foundational library for numerical computing in Python. It introduces the powerful ndarray object, which lets you store and process large arrays and matrices of numbers efficiently. NumPy is behind almost every data science or machine learning library — it provides the fast, vectorized math operations that make Python suitable for heavy computations. You’ll use it for tasks like matrix operations, statistical calculations, and data transformations that feed into models or visualizations.
 
+Deep learning is a type of model architecture that can excel at finding patterns in complex data due to its network structure. It begins with input data like text or pictures which are passed to hidden layers comprising of different interconnected neurons with each neuron applying a formula to optimize, recognize and transform the data to an output layer.
