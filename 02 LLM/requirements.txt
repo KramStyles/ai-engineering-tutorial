@@ -20,3 +20,4 @@ python-decouple==3.8
 ipykernel
 jupyterlab
 notebook
+unidecode

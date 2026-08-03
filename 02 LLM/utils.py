@@ -1,4 +1,5 @@
 import os
+import re
 
 from huggingface_hub import HfApi
 import tiktoken
@@ -14,6 +15,14 @@ def get_secret(name, default=None):
         return config(name, default)
     except (ImportError, ModuleNotFoundError):
         return os.environ.get(name, default)
+
+
+def clean_text(text):
+    text = text.lower() # Lowercase the text
+    # text = re.sub(r'[^a-z\s]', '', text) # Remove special characters and numbers
+    text = re.sub(r'[^\w\s]', '', text) # Remove punctuations
+    text = re.sub(r'\s+', ' ', text).strip() # Remove extra spaces
+    return text
 
 
 def count_tokens(text: str, model_name: str = "gpt-4o") -> int:
