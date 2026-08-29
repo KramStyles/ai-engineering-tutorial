@@ -4,6 +4,7 @@ from utils import count_tokens
 
 openai.api_key = api_key
 
+
 def generate_text(prompt):
     response = openai.Completion.create(
         engine="davinci-002",
