@@ -1,6 +1,6 @@
 openai==0.28
 config==0.5.1
-langchain==0.0.297
+# langchain==0.0.297
 pydantic==1.10.9
 tiktoken==0.5.1
 faiss-cpu==1.7.4
@@ -21,3 +21,5 @@ ipykernel
 jupyterlab
 notebook
 unidecode
+langchain-openai
+langchain
