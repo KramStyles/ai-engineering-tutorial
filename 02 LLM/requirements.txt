@@ -23,3 +23,7 @@ notebook
 unidecode
 langchain-openai
 langchain
+pypdf
+docx2txt
+langchain-chroma
+langchain-community
