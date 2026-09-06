@@ -26,4 +26,3 @@ langchain
 pypdf
 docx2txt
 langchain-chroma
-langchain-community
