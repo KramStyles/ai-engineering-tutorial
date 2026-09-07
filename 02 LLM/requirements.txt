@@ -26,3 +26,6 @@ langchain
 pypdf
 docx2txt
 langchain-chroma
+langgraph-checkpoint-sqlite
+mypy-ipython==20.8.0
+grandalf
