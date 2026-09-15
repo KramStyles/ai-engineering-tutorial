@@ -29,3 +29,5 @@ langchain-chroma
 langgraph-checkpoint-sqlite
 mypy-ipython==20.8.0
 grandalf
+pinecone
+# sentence-transformers
