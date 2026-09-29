@@ -1,3 +1,3 @@
 from utils import get_secret
 
-OPEN_AI_KEY = get_secret("AI_KEY")
+OPEN_AI_KEY = get_secret("OPEN_API_KEY", default="")
