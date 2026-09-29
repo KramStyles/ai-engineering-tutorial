@@ -14,6 +14,25 @@ completion = client.chat.completions.create(
 
 st.set_page_config(page_title="Streamlit Chat", page_icon="🤖")
 st.title(":blue[Chat]:yellow[Bot]")
+st.subheader("Personal Information", divider="red")
+name = st.text_input(label="Name", placeholder="Enter your name")
+experience = st.text_area(label="Experience", placeholder="Describe your experience")
+skills = st.text_area(label="Skills", placeholder="List your skills")
+data = {"name": name, "exp": experience, "skills": skills}
+st.write(data)
+st.write(f"**Your name**: {name}")
+st.write(f"**Your Experience**: {experience}")
+st.write(f"**Your Skills**: {skills}")
+
+st.subheader("Company and Position", divider="orange")
+col1, col2, col3 = st.columns(3)
+with col1:
+    company = st.selectbox("Choose Company", ("Amazon", "Meta", "Udemy", "Spotify", "Nestle", "X"))
+with col2:
+    level = st.radio("Choose Level", options=["Junior", "Mid-level", "Senior"], key="visibility")
+with col3:
+    position = st.selectbox("Choose position", ("Django Engineer", "Data Engineer", "ML Engineer", "AI Scientist", "Data Scientist", "Python Programmer"))
+
 
 if "model" not in st.session_state:
     st.session_state.model = "openai/gpt-oss-120b"
@@ -22,14 +41,18 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "system",
-            "content": "You are a HR executive for Amazon. You are interviewing a user named Olivia for the position of Data Scientist at a Junior level.\n\nThe interviewee has no experience.\n\nThe interviewee possesses the following skills: Python, Machine Learning and Data Analysis.\n\nUse these details to create two of your questions:\n- Can you share an example of a data-related problem you encountered and how you approached solving it?\n- How do you prioritize tasks when working on multiple data projects with tight deadlines?\n\nAsk each question individually, creating a conversational flow rather than presenting all the questions simultaneously."
+            "content": f"You are a HR executive. You are interviewing a user named {name} for the position of {position} at a {level} level for the {company} company.\n\nThe interviewee has the following experience: {experience}.\n\nThe interviewee possesses the following skills: {skills}\n\nAsk each question individually, creating a conversational flow rather than presenting all the questions simultaneously."
         }
     ]
 
 for message in st.session_state.messages:
-    if message["role"] != "system":
+    if message["role"] != "system1":
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
+
+
+# Interviewer Side
+st.subheader("Interviewer Side", divider="rainbow")
 
 if prompt := st.chat_input("Your answer."):
     st.session_state.messages.append({"role": "user", "content": prompt})
