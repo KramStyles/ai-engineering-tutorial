@@ -31,8 +31,10 @@ st.title(":blue[Chat]:yellow[Bot]")
 if not st.session_state.setup:
     if "data" not in st.session_state: 
         st.session_state.data = data = {
-            "name": "", "experience": "", "skills": "", "user_message": 0, "feedback_shown": False,
-            "company": "Amazon", "level": "Junior", "position": "Python Programmer", "chat_complete": False
+            "name": "Michael Jamie", "experience": "", "skills": "Python, Django, Flask, PyQT5, etc", 
+            "user_message": 0, "feedback_shown": False,
+            "company": "Amazon", "level": "Junior", "position": "Python Programmer", "chat_complete": False,
+            "messages": []
         }
     st.subheader("Personal Information", divider="red")
     st.session_state.data["name"] = st.text_input(label="Name", placeholder="Enter your name", value=st.session_state.data["name"], max_chars=40)
@@ -56,23 +58,21 @@ if not st.session_state.setup:
 
     st.button("Start Interview", on_click=complete_setup, icon="✍️")
 
-elif st.session_state.setup and not st.session_state.data.chat_complete and not st.session_state.data.feedback_shown:
+elif st.session_state.setup and not st.session_state.data["chat_complete"] and not st.session_state.data["feedback_shown"]:
 
     if "model" not in st.session_state:
         st.session_state.model = "openai/gpt-oss-120b"
 
-    print(st.session_state.messages)
-
-    if not st.session_state.data.messages:
-        st.session_state.messages = [
+    if not st.session_state.data["messages"]:
+        st.session_state.data["messages"] = [
             {
                 "role": "system",
                 "content": f'You are a HR executive. You are interviewing a user named {st.session_state.data["name"]} for the position of {st.session_state.data["position"]} at a {st.session_state.data["level"]} level for the {st.session_state.data["company"]} company.\n\nThe interviewee has the following experience: {st.session_state.data["experience"]}.\n\nThe interviewee possesses the following skills: {st.session_state.data["skills"]}\n\nAsk each question individually, creating a conversational flow rather than presenting all the questions simultaneously.'
             }
         ]
 
-    for message in st.session_state.messages:
-        if message["role"] != "system1":
+    for message in st.session_state.data["messages"]:
+        if message["role"] != "system":
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
@@ -81,38 +81,39 @@ elif st.session_state.setup and not st.session_state.data.chat_complete and not 
     st.subheader("Interviewer Side", divider="rainbow")
     st.info("You can begin by introducing yourself.", icon="👋")
     st.button("Edit Personal Information", icon="✍️", on_click=incomplete_setup)
+    
+    on_going = st.session_state.data["user_message"] < 5
+    if on_going:
+        if prompt := st.chat_input("Your answer.", max_chars=750):
+            st.session_state.data["messages"].append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
 
-    on_going = True if st.session.state.user_message < 5  else False
-    if prompt := st.chat_input("Your answer.", max_chars=750) and on_going:
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+            on_going = st.session_state.data["user_message"] < 4
+            if on_going:
+                with st.chat_message("ai"):
+                    stream = client.chat.completions.create(
+                        model=st.session_state.model, temperature=1,
+                        max_completion_tokens=2048,
+                        top_p=1,
+                        reasoning_effort="medium",
+                        stream=True,
+                        stop=None,
+                        messages=[
+                            {"role": m["role"], "content": m["content"]}
+                            for m in st.session_state.data["messages"]
+                        ]
+                    )
+                    response = st.write_stream(
+                        chunk.choices[0].delta.content
+                        for chunk in stream
+                        if chunk.choices[0].delta.content
+                    )
+                st.session_state.data["messages"].append({"role": "assistant", "content": response})
+            st.session_state.data["user_message"] += 1
 
-        on_going = True if st.session.state.user_message < 4  else False
-        if on_going:
-            with st.chat_message("ai"):
-                stream = client.chat.completions.create(
-                    model=st.session_state.model, temperature=1,
-                    max_completion_tokens=2048,
-                    top_p=1,
-                    reasoning_effort="medium",
-                    stream=True,
-                    stop=None,
-                    messages=[
-                        {"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages
-                    ]
-                )
-                response = st.write_stream(
-                    chunk.choices[0].delta.content
-                    for chunk in stream
-                    if chunk.choices[0].delta.content
-                )
-            st.session_state.messages.append({"role": "assistant", "content": response})
-        st.session.state.user_message += 1
-
-    if st.session.state.user_message >= 5:
-        st.session_state.data.chat_complete = True
+    elif not on_going:
+        st.session_state.data["chat_complete"] = True
         st.success("Interview completed. Thank you for your time!", icon="✅")
         st.button("Provide Feedback", on_click=show_feedback, icon="💬")
 
