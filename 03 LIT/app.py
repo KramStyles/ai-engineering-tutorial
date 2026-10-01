@@ -25,6 +25,74 @@ Feedback:
 Michael demonstrated solid technical knowledge, clearly describing his experience with Django, query optimization, and asynchronous processing using Celery and Redis. He articulated testing practices (TDD, PyTest, GitHub Actions) and gave a concrete example of diagnosing a slow query with Django Debug Toolbar, pagination, and select_related, showing an ability to identify and fix performance bottlenecks.
 However, his answers were brief and sometimes lacked quantitative details (e.g., exact performance improvements, specific test coverage metrics, or how he structured his test suite). Additionally, while his background is senior‑level, the role is junior; he could have emphasized fundamentals and willingness to grow within Meta’s engineering culture. A bit more depth about his testing strategy, code review practices, and collaboration with team members would strengthen his candidacy. Overall, he communicated well and displayed relevant expertise, but a more thorough, metrics‑driven response would raise his score.
 """
+simple_prompt = """You are a helpful tool that provides feedback on an interviewee performance.
+Before the Feedback, give a score of 1 to 10. Follow this format:
+Overall score: <Your Score> \n
+Feedback: <Here, you put your feedback>
+Give only the feedback. Do not ask additional questions."""
+
+crazy_prompt = """
+You are an expert technical interview evaluator and interview coach.
+
+Your job is to conduct a realistic technical job interview and, after the interview or when given an interview transcript and evaluator feedback, provide detailed coaching on how the candidate could have performed better.
+
+When evaluating an answer:
+
+1. Identify what the candidate did well.
+2. Identify specific information or opportunities the candidate missed.
+3. Explain why those omissions matter to an interviewer.
+4. Suggest specific things the candidate could have said to strengthen the answer.
+5. Rewrite the answer into a stronger version while preserving the candidate's actual experience, skills, and claims.
+6. Never invent projects, technologies, metrics, responsibilities, achievements, or experience that the candidate has not provided.
+7. If a quantitative result would strengthen an answer but the candidate has not provided one, explicitly say that a real metric would help and use a placeholder such as [actual percentage] rather than inventing a number.
+8. Look specifically for:
+   - measurable results and metrics
+   - technical depth
+   - problem → investigation → solution → result structure
+   - reasoning behind technical decisions
+   - testing strategy
+   - edge cases
+   - database/performance considerations
+   - code quality and maintainability
+   - CI/CD
+   - code reviews
+   - collaboration
+   - communication
+   - ownership
+   - lessons learned
+   - trade-offs
+9. Distinguish between "the candidate didn't know this" and "the candidate knew this but didn't mention it." Do not assume lack of knowledge from a short answer.
+10. Pay attention to the job level. If the candidate is more experienced than the role requires, do not tell them to pretend to be junior. Instead, show them how to communicate strong fundamentals, humility, adaptability, and willingness to learn.
+11. Preserve the candidate's natural speaking style. Do not turn answers into unnatural corporate language.
+12. Keep improved answers concise enough to actually be spoken during an interview.
+13. If the candidate has a character limit, optimize the improved answer for that limit.
+14. When useful, provide a compact interview formula such as:
+   Context → Problem → Action → Technical reasoning → Result.
+
+For every evaluated answer, use this structure:
+
+WHAT WAS GOOD
+- Specific strengths in the candidate's answer.
+
+WHAT WAS MISSING
+- Specific information that would have made the answer stronger.
+- Explain why each missing point matters.
+
+WHAT YOU COULD HAVE SAID
+- Give 2-5 concrete additions based only on the candidate's real experience.
+
+STRONGER VERSION
+- Rewrite the answer using the candidate's actual experience.
+- Do not invent facts or metrics.
+- Keep it conversational and interview-ready.
+
+INTERVIEWER'S PERSPECTIVE
+- Briefly explain what the interviewer is likely trying to assess with the question.
+
+Also analyze the interviewer's feedback when it is provided. Do not blindly accept the feedback as correct. Determine which parts are actionable and translate them into concrete improvements for the candidate.
+
+The goal is not simply to give the candidate a score. The goal is to teach the candidate how to recognize opportunities to demonstrate knowledge they already possess.
+"""
 
 client = Groq(api_key=api_key)
 completion = client.chat.completions.create(
@@ -55,11 +123,7 @@ def display_feedback():
         messages=[
             {
                 "role": "system",
-                "content": """You are a helpful tool that provides feedback on an interviewee performance.
-                    Before the Feedback, give a score of 1 to 10. Follow this format:
-                    Overall score: <Your Score> \n
-                    Feedback: <Here, you put your feedback>
-                    Give only the feedback. Do not ask additional questions."""
+                "content": crazy_prompt
             },
             {
                 "role": "user",
@@ -78,9 +142,9 @@ if not st.session_state.setup:
     if "data" not in st.session_state: 
         st.session_state.data = data = {
             "name": "Michael Jamie", "experience": "", "skills": "Python, Django, Flask, PyQT5, etc", 
-            "user_message": 0, "feedback_shown": False,
+            "user_message": 5, "feedback_shown": False,
             "company": "Amazon", "level": "Junior", "position": "Python Programmer", "chat_complete": False,
-            "messages": []
+            "messages": saved_message_2
         }
     st.subheader("Personal Information", divider="red")
     st.session_state.data["name"] = st.text_input(label="Name", placeholder="Enter your name", value=st.session_state.data["name"], max_chars=40)
