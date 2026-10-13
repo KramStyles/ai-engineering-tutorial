@@ -1,3 +1,4 @@
+groq
 python-decouple
 streamlit
-groq
+streamlit-js-eval

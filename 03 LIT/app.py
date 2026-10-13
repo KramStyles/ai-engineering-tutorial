@@ -1,5 +1,6 @@
 from groq import Groq
 import streamlit as st
+from streamlit_js_eval import streamlit_js_eval
 
 from config import OPEN_AI_KEY as api_key
 
@@ -133,6 +134,10 @@ def display_feedback():
     )
     st.write(feedback.choices[0].message.content)
 
+    # Refresh the page.
+    if st.button("Restart Interview", type="primary", icon="🔄"):
+        streamlit_js_eval("window.location.reload()")
+
 
 
 st.set_page_config(page_title="Streamlit Chat", page_icon="🤖")
@@ -142,7 +147,7 @@ if not st.session_state.setup:
     if "data" not in st.session_state: 
         st.session_state.data = data = {
             "name": "Michael Jamie", "experience": "", "skills": "Python, Django, Flask, PyQT5, etc", 
-            "user_message": 5, "feedback_shown": False,
+            "user_message": 0, "feedback_shown": False,
             "company": "Amazon", "level": "Junior", "position": "Python Programmer", "chat_complete": False,
             "messages": saved_message_2
         }

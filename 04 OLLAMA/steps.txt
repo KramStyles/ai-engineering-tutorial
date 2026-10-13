@@ -1,0 +1,6 @@
+Install Ollama:             curl -fsSL https://ollama.com/install.sh | sh
+Start Ollama:               ollama start
+Download model:             ollama run llama3.2:1b
+Remove model:               ollama rm llama3.2:1b
+Show model information:     ollama show llama3.2:
+List models:                ollama list
